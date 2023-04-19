@@ -30,6 +30,7 @@ export default function SignInPage() {
       <form onSubmit={handleLogin}>
         <MyWalletLogo />
         <input
+          data-test="email"
           name="email"
           placeholder="E-mail"
           type="email" 
@@ -39,6 +40,7 @@ export default function SignInPage() {
           />
 
         <input
+          data-test="password"
           name="password"
           placeholder="Senha"
           type="password"
