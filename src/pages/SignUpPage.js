@@ -1,8 +1,9 @@
 import { Link, useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import MyWalletLogo from "../components/MyWalletLogo"
-import { useState } from "react";
+import {  useState } from "react";
 import apiAuth from "../services/apiAuth";
+
 
 export default function SignUpPage() {
   const [form, setForm] = useState({ email: "", password: "", name: "", confPassword: "" });
@@ -12,7 +13,6 @@ export default function SignUpPage() {
     setForm({ ...form, [e.target.name]: e.target.value })
   }
 
-
   function handleSignUp(e) {
     e.preventDefault();
     if (form.password !== form.confPassword) {
@@ -21,7 +21,7 @@ export default function SignUpPage() {
 
     apiAuth.signUp({email: form.email, name: form.name, password: form.password})
     .then((res) => {
-      console.log(res.data)
+      //console.log(res.data)
       navigate("/")
       
     }).catch((err) => {
@@ -58,7 +58,7 @@ export default function SignUpPage() {
           name="password"
           placeholder="Senha"
           type="password"
-          autocomplete="new-password"
+          autoComplete="new-password"
           required
           value={form.password}
           onChange={handleForm}
@@ -69,7 +69,7 @@ export default function SignUpPage() {
           name="confPassword"
           placeholder="Confirme a senha"
           type="password"
-          autocomplete="new-password"
+          autoComplete="new-password"
           required
           value={form.confPassword}
           onChange={handleForm}

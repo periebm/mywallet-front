@@ -1,12 +1,46 @@
 import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
+import { useContext, useEffect, useState } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import { UserContext, lsUser, checkLoggedIn } from "../contexts/UserContext";
+import apiAuth from "../services/apiAuth"
 
 export default function HomePage() {
+  const navigate = useNavigate();
+  const { user, setUser } = useContext(UserContext)
+  const [username, setName] = useState("")
+
+
+  useEffect(() => {
+    if (!checkLoggedIn(lsUser, user)) {
+      navigate("/")
+      alert("Faca o login")
+    }
+    else {
+      let cfg = {
+        headers: {
+          Authorization: `Bearer ${user.token}`
+        }
+      }
+
+      if (lsUser === null);
+      else {
+        cfg.headers.Authorization = `Bearer ${lsUser.token}`
+      }
+
+      apiAuth.logged(cfg)
+        .then((res) => setName(res.data.name))
+        .catch((err) => console.log(err));
+
+    };
+  }, [])
+
+
   return (
     <HomeContainer>
       <Header>
-        <h1>Olá, Fulano</h1>
+        <h1>Olá, {username}</h1>
         <BiExit />
       </Header>
 
@@ -37,14 +71,15 @@ export default function HomePage() {
 
 
       <ButtonsContainer>
-        <button>
-          <AiOutlinePlusCircle />
-          <p>Nova <br /> entrada</p>
-        </button>
-        <button>
-          <AiOutlineMinusCircle />
-          <p>Nova <br />saída</p>
-        </button>
+          <button onClick={()=> navigate("/nova-transacao/entrada")}>
+            <AiOutlinePlusCircle />
+            <p>Nova <br /> entrada</p>
+          </button>
+
+          <button onClick={()=> navigate("/nova-transacao/saida")}>
+            <AiOutlineMinusCircle />
+            <p>Nova <br />saída</p>
+          </button>
       </ButtonsContainer>
 
     </HomeContainer>
@@ -101,7 +136,8 @@ const ButtonsContainer = styled.section`
       font-size: 18px;
     }
   }
-`
+  `
+
 const Value = styled.div`
   font-size: 16px;
   text-align: right;
