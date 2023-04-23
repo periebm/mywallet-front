@@ -17,5 +17,10 @@ function transaction(auth) {
     return promise;
 }
 
-const apiAuth = {login, signUp, transaction};
+function makeTransaction(body, auth) {
+    const promise = axios.post(`${BASE_URL}/transaction`, body, auth)
+    return promise;
+}
+
+const apiAuth = {login, signUp, transaction, makeTransaction};
 export default apiAuth;

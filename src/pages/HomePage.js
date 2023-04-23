@@ -3,9 +3,8 @@ import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
 import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { UserContext, checkLoggedIn } from "../contexts/UserContext";
-import {LsContext} from "../contexts/LocalStorageContext";
-
+import { UserContext } from "../contexts/UserContext";
+import { LsContext } from "../contexts/LocalStorageContext";
 import apiAuth from "../services/apiAuth"
 
 export default function HomePage() {
@@ -15,17 +14,17 @@ export default function HomePage() {
   const [transactions, setTransactions] = useState([])
   const [total, setTotal] = useState(0);
   const [totalColor, setColor] = useState("positivo")
-  const {lsUser, setLsUser} = useContext(LsContext);
+  const { lsUser, setLsUser } = useContext(LsContext);
   let check = null;
 
   useEffect(() => {
 
-    if(localStorage.getItem("user")){
+    if (localStorage.getItem("user")) {
       setUser(JSON.parse(localStorage.getItem("user")))
       check = JSON.parse(localStorage.getItem("user"))
-    } 
+    }
 
-    if((check === null || check === undefined) && (user.token === null || user.token === undefined)){
+    if ((check === null || check === undefined) && (user.token === null || user.token === undefined)) {
       navigate("/")
       alert("Faca o login")
     }
@@ -48,7 +47,7 @@ export default function HomePage() {
           setTransactions(res.data.transactions);
           sumMoney(res.data.transactions)
         })
-        .catch((err) => console.log(err))
+        .catch((err) => alert(err))
     };
   }, [])
 
@@ -62,24 +61,18 @@ export default function HomePage() {
     });
 
     totalSum < 0 ? setColor("negativo") : setColor("positivo");
-    
-    if(totalSum < 0) totalSum *= -1;
+
+    if (totalSum < 0) totalSum *= -1;
 
     setTotal(totalSum.toFixed(2));
   }
 
 
-  function logout(){
+  function logout() {
     setUser({});
     localStorage.removeItem("user");
     navigate("/");
   }
-
-  /*   if (movie === undefined) {
-      return <div>Carregando...</div>
-    }
-   */
-
 
   return (
     <HomeContainer>
@@ -88,26 +81,36 @@ export default function HomePage() {
         <BiExit onClick={() => logout()} />
       </Header>
 
-      <TransactionsContainer>
-        <ul>
-          {
-            transactions.map((t) => (
-              <ListItemContainer key={t._id}>
-                <div>
-                  <span>{t.date}</span>
-                  <strong>{t.description}</strong>
-                </div>
-                <Value color={t.type === "entrada" ? "positivo" : "negativo"}>{t.value}</Value>
-              </ListItemContainer>
-            ))
-          }
-        </ul>
 
-        <article>
-          <strong>Saldo</strong>
-          <Value color={totalColor}>{total}</Value>
-        </article>
-      </TransactionsContainer>
+      {transactions.length > 0 ?
+
+        <TransactionsContainer>
+          <ul>
+            {
+              transactions.map((t) => (
+                <ListItemContainer key={t._id}>
+                  <div>
+                    <span>{t.date}</span>
+                    <strong>{t.description}</strong>
+                  </div>
+                  <Value color={t.type === "entrada" ? "positivo" : "negativo"}>{t.value}</Value>
+                </ListItemContainer>
+              ))
+            }
+          </ul>
+          <article>
+            <strong>Saldo</strong>
+            <Value color={totalColor}>{total}</Value>
+          </article>
+        </TransactionsContainer>
+
+        :
+        <ContainerEmpty>
+          <StyledP> Não há registros de
+            entrada ou saída</StyledP>
+        </ContainerEmpty>
+      }
+
 
 
       <ButtonsContainer>
@@ -162,6 +165,7 @@ const TransactionsContainer = styled.article`
     }
   }
 `
+
 const ButtonsContainer = styled.section`
   margin-top: 15px;
   margin-bottom: 0;
@@ -198,4 +202,26 @@ const ListItemContainer = styled.li`
     color: #c6c6c6;
     margin-right: 10px;
   }
+`
+
+const ContainerEmpty = styled.article`
+display: flex;
+justify-content: center;
+align-items: center;
+flex-grow: 1;
+background-color: #fff;
+color: #000;
+border-radius: 5px;
+padding: 16px;
+
+`
+
+const StyledP = styled.p`
+  margin: 0 30px;
+  font-family: 'Raleway', sans-serif;
+  color: #868686;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 24px;
+  text-align: center;
 `

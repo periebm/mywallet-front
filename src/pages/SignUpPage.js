@@ -21,7 +21,6 @@ export default function SignUpPage() {
 
     apiAuth.signUp({email: form.email, name: form.name, password: form.password})
     .then((res) => {
-      //console.log(res.data)
       navigate("/")
       
     }).catch((err) => {
