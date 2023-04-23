@@ -6,13 +6,16 @@ import SignUpPage from "./pages/SignUpPage"
 import TransactionsPage from "./pages/TransactionPage"
 import { useState } from "react"
 import { UserContext } from "./contexts/UserContext"
+import { LsContext } from "./contexts/LocalStorageContext"
 
 export default function App() {
   const [user, setUser] = useState({})
+  const [lsUser, setLsUser] = useState({})
 
   return (
     <PagesContainer>
-      <BrowserRouter>
+      <BrowserRouter> 
+       <LsContext.Provider value={{lsUser, setLsUser}}> 
         <UserContext.Provider value={{user, setUser}}>
           <Routes>
             <Route path="/" element={<SignInPage />} />
@@ -21,6 +24,7 @@ export default function App() {
             <Route path="/nova-transacao/:tipo" element={<TransactionsPage />} />
           </Routes>
         </UserContext.Provider>
+        </LsContext.Provider>
       </BrowserRouter>
     </PagesContainer>
   )

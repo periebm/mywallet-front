@@ -2,21 +2,34 @@ import styled from "styled-components"
 import { BiExit } from "react-icons/bi"
 import { AiOutlineMinusCircle, AiOutlinePlusCircle } from "react-icons/ai"
 import { useContext, useEffect, useState } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { UserContext, lsUser, checkLoggedIn } from "../contexts/UserContext";
+import { useNavigate } from "react-router-dom"
+import { UserContext, checkLoggedIn } from "../contexts/UserContext";
+import {LsContext} from "../contexts/LocalStorageContext";
+
 import apiAuth from "../services/apiAuth"
 
 export default function HomePage() {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext)
   const [username, setName] = useState("")
-
+  const [transactions, setTransactions] = useState([])
+  const [total, setTotal] = useState(0);
+  const [totalColor, setColor] = useState("positivo")
+  const {lsUser, setLsUser} = useContext(LsContext);
+  let check = null;
 
   useEffect(() => {
-    if (!checkLoggedIn(lsUser, user)) {
+
+    if(localStorage.getItem("user")){
+      setUser(JSON.parse(localStorage.getItem("user")))
+      check = JSON.parse(localStorage.getItem("user"))
+    } 
+
+    if((check === null || check === undefined) && (user.token === null || user.token === undefined)){
       navigate("/")
       alert("Faca o login")
     }
+
     else {
       let cfg = {
         headers: {
@@ -26,60 +39,87 @@ export default function HomePage() {
 
       if (lsUser === null);
       else {
-        cfg.headers.Authorization = `Bearer ${lsUser.token}`
+        cfg.headers.Authorization = `Bearer ${check.token}`
       }
 
-      apiAuth.logged(cfg)
-        .then((res) => setName(res.data.name))
-        .catch((err) => console.log(err));
-
+      apiAuth.transaction(cfg)
+        .then((res) => {
+          setName(res.data.username);
+          setTransactions(res.data.transactions);
+          sumMoney(res.data.transactions)
+        })
+        .catch((err) => console.log(err))
     };
   }, [])
+
+
+  function sumMoney(transactions) {
+    let totalSum = 0;
+
+    transactions.forEach(e => {
+      if (e.type === "entrada") totalSum += Number(e.value);
+      else totalSum -= Number(e.value);
+    });
+
+    totalSum < 0 ? setColor("negativo") : setColor("positivo");
+    
+    if(totalSum < 0) totalSum *= -1;
+
+    setTotal(totalSum.toFixed(2));
+  }
+
+
+  function logout(){
+    setUser({});
+    localStorage.removeItem("user");
+    navigate("/");
+  }
+
+  /*   if (movie === undefined) {
+      return <div>Carregando...</div>
+    }
+   */
 
 
   return (
     <HomeContainer>
       <Header>
         <h1>Olá, {username}</h1>
-        <BiExit />
+        <BiExit onClick={() => logout()} />
       </Header>
 
       <TransactionsContainer>
         <ul>
-          <ListItemContainer>
-            <div>
-              <span>30/11</span>
-              <strong>Almoço mãe</strong>
-            </div>
-            <Value color={"negativo"}>120,00</Value>
-          </ListItemContainer>
-
-          <ListItemContainer>
-            <div>
-              <span>15/11</span>
-              <strong>Salário</strong>
-            </div>
-            <Value color={"positivo"}>3000,00</Value>
-          </ListItemContainer>
+          {
+            transactions.map((t) => (
+              <ListItemContainer key={t._id}>
+                <div>
+                  <span>{t.date}</span>
+                  <strong>{t.description}</strong>
+                </div>
+                <Value color={t.type === "entrada" ? "positivo" : "negativo"}>{t.value}</Value>
+              </ListItemContainer>
+            ))
+          }
         </ul>
 
         <article>
           <strong>Saldo</strong>
-          <Value color={"positivo"}>2880,00</Value>
+          <Value color={totalColor}>{total}</Value>
         </article>
       </TransactionsContainer>
 
 
       <ButtonsContainer>
-          <button onClick={()=> navigate("/nova-transacao/entrada")}>
-            <AiOutlinePlusCircle />
-            <p>Nova <br /> entrada</p>
-          </button>
+        <button onClick={() => navigate("/nova-transacao/entrada")}>
+          <AiOutlinePlusCircle />
+          <p>Nova <br /> entrada</p>
+        </button>
 
-          <button onClick={()=> navigate("/nova-transacao/saida")}>
-            <AiOutlineMinusCircle />
-            <p>Nova <br />saída</p>
-          </button>
+        <button onClick={() => navigate("/nova-transacao/saida")}>
+          <AiOutlineMinusCircle />
+          <p>Nova <br />saída</p>
+        </button>
       </ButtonsContainer>
 
     </HomeContainer>
@@ -109,6 +149,10 @@ const TransactionsContainer = styled.article`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  overflow: hidden;
+  ul{
+    overflow: scroll;
+  }
   article {
     display: flex;
     justify-content: space-between;   

@@ -3,17 +3,20 @@ import { Link, useNavigate } from "react-router-dom"
 import MyWalletLogo from "../components/MyWalletLogo"
 import apiAuth from "../services/apiAuth";
 import { useContext, useEffect, useState } from "react";
-import { UserContext, lsUser, checkLoggedIn } from "../contexts/UserContext";
+import { UserContext } from "../contexts/UserContext";
+import {LsContext} from "../contexts/LocalStorageContext";
 
 export default function SignInPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const navigate = useNavigate();
   const {user, setUser} = useContext(UserContext);
+  const {lsUser, setLsUser} = useContext(LsContext);
   
   useEffect(() => {
-    if(checkLoggedIn(lsUser, user)){
+    if(localStorage.getItem("user")){
+      setLsUser(JSON.parse(localStorage.getItem("user")))
       navigate("/home")
-    };
+    } 
   }, [])
 
 
@@ -29,9 +32,8 @@ export default function SignInPage() {
         const {name, token} = res.data;
         setUser({name, token});
         localStorage.setItem("user",JSON.stringify({name, token}));
-    
+        setLsUser(JSON.parse(localStorage.getItem("user")));
         navigate("/home");
-
       }).catch((err) => {
         alert(err.response.data)
       });
