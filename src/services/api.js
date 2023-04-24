@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = process.env.REACT_APP_API_URL;
+const BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 function login(body){
     const promise = axios.post(`${BASE_URL}/login`, body);
@@ -22,5 +22,5 @@ function makeTransaction(body, auth) {
     return promise;
 }
 
-const apiAuth = {login, signUp, transaction, makeTransaction};
-export default apiAuth;
+const api = {login, signUp, transaction, makeTransaction};
+export default api;

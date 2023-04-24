@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom"
 import styled from "styled-components"
 import MyWalletLogo from "../components/MyWalletLogo"
 import {  useState } from "react";
-import apiAuth from "../services/apiAuth";
+import api from "../services/api";
 
 
 export default function SignUpPage() {
@@ -19,7 +19,7 @@ export default function SignUpPage() {
       return alert("As senhas diferem")
     }
 
-    apiAuth.signUp({email: form.email, name: form.name, password: form.password})
+    api.signUp({email: form.email, name: form.name, password: form.password})
     .then((res) => {
       navigate("/")
       

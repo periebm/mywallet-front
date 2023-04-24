@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../contexts/UserContext";
 import { LsContext } from "../contexts/LocalStorageContext";
-import apiAuth from "../services/apiAuth"
+import api from "../services/api"
 
 
 export default function TransactionsPage() {
@@ -39,7 +39,7 @@ export default function TransactionsPage() {
         cfg.headers.Authorization = `Bearer ${check.token}`
       }
 
-      apiAuth.transaction(cfg)
+      api.transaction(cfg)
         .then((res) => {
         })
         .catch((err) => alert(err))
@@ -55,7 +55,7 @@ export default function TransactionsPage() {
 
     const fixedValue = Number(form.value).toFixed(2);
 
-    apiAuth.makeTransaction(
+    api.makeTransaction(
       { value: fixedValue, description: form.description, type: tipo },
       {
         headers:

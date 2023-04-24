@@ -5,7 +5,7 @@ import { useContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../contexts/UserContext";
 import { LsContext } from "../contexts/LocalStorageContext";
-import apiAuth from "../services/apiAuth"
+import api from "../services/api"
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -41,7 +41,7 @@ export default function HomePage() {
         cfg.headers.Authorization = `Bearer ${check.token}`
       }
 
-      apiAuth.transaction(cfg)
+      api.transaction(cfg)
         .then((res) => {
           setName(res.data.username);
           setTransactions(res.data.transactions);
@@ -154,7 +154,7 @@ const TransactionsContainer = styled.article`
   justify-content: space-between;
   overflow: hidden;
   ul{
-    overflow: scroll;
+    overflow: auto;
   }
   article {
     display: flex;

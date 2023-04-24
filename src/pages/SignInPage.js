@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { Link, useNavigate } from "react-router-dom"
 import MyWalletLogo from "../components/MyWalletLogo"
-import apiAuth from "../services/apiAuth";
+import api from "../services/api";
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../contexts/UserContext";
 import {LsContext} from "../contexts/LocalStorageContext";
@@ -27,7 +27,7 @@ export default function SignInPage() {
   function handleLogin(e) {
     e.preventDefault();
     
-    apiAuth.login(form)
+    api.login(form)
       .then((res) => {
         const {name, token} = res.data;
         setUser({name, token});
