@@ -28,8 +28,8 @@ In this project, the MongoDB database was used through the website: https://clou
 ## Installing / Getting started
 
 1. Clone this repository
-2. Clone the back-end repository at https://github.com/my-user/my-project-backend
-3. Follow instructions to run back-end at https://github.com/my-user/my-project-backend
+2. Clone the back-end repository at https://github.com/periebm/mywallet-back
+3. Follow instructions to run back-end at https://github.com/periebm/mywallet-back
 4. Install dependencies
 ```bash
 npm i
